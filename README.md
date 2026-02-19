@@ -18,9 +18,9 @@ Zed editor extension for WarpLabs DSLs — syntax highlighting, diagnostics, com
 
 Tree-sitter-based highlighting for all 5 languages, including keywords, types, strings, numbers, comments, operators, and built-in functions.
 
-### Language Server (wplab-lsp)
+### Language Server (wplabs-lsp)
 
-The extension integrates with `wplab-lsp`, a Language Server Protocol server that provides:
+The extension integrates with `wplabs-lsp`, a Language Server Protocol server that provides:
 
 | Feature | Description |
 |---------|-------------|
@@ -42,31 +42,31 @@ The extension integrates with `wplab-lsp`, a Language Server Protocol server tha
 
 ## Installation
 
-### 1. Install wplab-lsp
+### 1. Install wplabs-lsp
 
 The LSP binary must be in your `PATH`.
 
 **From source:**
 
 ```bash
-cd tools/wplab-lsp
+cd tools/wplabs-lsp
 cargo build --release
 # Copy or symlink to a directory in your PATH
-cp target/release/wplab-lsp /usr/local/bin/
+cp target/release/wplabs-lsp /usr/local/bin/
 # or
-ln -s "$(pwd)/target/release/wplab-lsp" /usr/local/bin/wplab-lsp
+ln -s "$(pwd)/target/release/wplabs-lsp" /usr/local/bin/wplabs-lsp
 ```
 
 **Via cargo install** (after publishing to crates.io):
 
 ```bash
-cargo install wplab-lsp
+cargo install wplabs-lsp
 ```
 
 Verify:
 
 ```bash
-wplab-lsp --version  # or just: which wplab-lsp
+wplabs-lsp --version  # or just: which wplabs-lsp
 ```
 
 ### 2. Install the Zed Extension
@@ -128,10 +128,10 @@ Open any `.wfl`, `.wfs`, `.wpl`, `.oml`, or `.wfg` file. You should see:
 
 ### LSP not starting
 
-Check that `wplab-lsp` is in your PATH:
+Check that `wplabs-lsp` is in your PATH:
 
 ```bash
-which wplab-lsp
+which wplabs-lsp
 ```
 
 Check Zed logs for errors: `Cmd+Shift+P` → "zed: open log"
@@ -145,14 +145,14 @@ The LSP only reports tree-sitter parse errors (ERROR/MISSING nodes). If the file
 Run with logging enabled:
 
 ```bash
-RUST_LOG=debug wplab-lsp
+RUST_LOG=debug wplabs-lsp
 ```
 
 Manual protocol test:
 
 ```bash
 printf 'Content-Length: 80\r\n\r\n{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"capabilities":{}}}' \
-  | wplab-lsp
+  | wplabs-lsp
 ```
 
 ### Grammar changes not reflected
@@ -182,7 +182,7 @@ tools/
 │   ├── snippets/                # Code snippets
 │   └── examples/                # Example files for testing
 │
-├── wplab-lsp/                   # Language Server binary
+├── wplabs-lsp/                   # Language Server binary
 │   ├── Cargo.toml
 │   └── src/
 │       ├── main.rs              # Stdio transport entry point

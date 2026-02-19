@@ -1,16 +1,16 @@
 id = "warplabs"
 name = "WarpLabs"
-version = "0.12.0"
+version = "0.13.0"
 schema_version = 1
 authors = ["WarpLabs Team"]
 description = "WFL, WFS, WPL, OML, WFG, and GXL language support for WarpLabs"
 repository = "https://github.com/wp-labs/zed-warplabs"
 
-[language_servers.wplab-lsp]
+[language_servers.wplabs-lsp]
 name = "WarpLabs LSP"
 languages = ["WFL", "WFS", "WPL", "OML", "WFG"]
 
-[language_servers.wplab-lsp.language_ids]
+[language_servers.wplabs-lsp.language_ids]
 "WFL" = "wfl"
 "WFS" = "wfs"
 "WPL" = "wpl"

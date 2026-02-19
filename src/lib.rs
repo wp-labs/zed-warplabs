@@ -13,8 +13,8 @@ impl zed::Extension for WarpLabsExtension {
         worktree: &zed::Worktree,
     ) -> Result<zed::Command> {
         let path = worktree
-            .which("wplab-lsp")
-            .unwrap_or_else(|| "wplab-lsp".to_string());
+            .which("wplabs-lsp")
+            .unwrap_or_else(|| "wplabs-lsp".to_string());
 
         Ok(zed::Command {
             command: path,

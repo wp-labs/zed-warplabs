@@ -15,7 +15,7 @@
 The extension has two components:
 
 1. **Zed extension** (`tools/zed-warplabs/`) — syntax highlighting, bracket matching, code folding, indentation, outline, snippets, and LSP client integration
-2. **Language server** (`tools/wplab-lsp/`) — diagnostics, completion, hover, go-to-definition, find references, rename, document symbols, formatting
+2. **Language server** (`tools/wplabs-lsp/`) — diagnostics, completion, hover, go-to-definition, find references, rename, document symbols, formatting
 
 ## Directory Structure
 
@@ -36,7 +36,7 @@ tools/
 │   ├── snippets/                  # Code snippets (oml.json)
 │   └── examples/                  # Test files for all 5 languages
 │
-├── wplab-lsp/                     # Language server (Rust binary)
+├── wplabs-lsp/                     # Language server (Rust binary)
 │   ├── Cargo.toml
 │   └── src/
 │       ├── main.rs                # tokio + tower-lsp stdio transport
@@ -84,11 +84,11 @@ tools/
 
 ```bash
 # 1. Build the language server
-cd tools/wplab-lsp
+cd tools/wplabs-lsp
 cargo build --release
 
 # 2. Make it available in PATH
-ln -sf "$(pwd)/target/release/wplab-lsp" /usr/local/bin/wplab-lsp
+ln -sf "$(pwd)/target/release/wplabs-lsp" /usr/local/bin/wplabs-lsp
 
 # 3. Install dev extension in Zed
 #    Cmd+Shift+P → "zed: install dev extension" → select tools/zed-warplabs/
@@ -119,7 +119,7 @@ cp tree-sitter-<lang>.wasm ../zed-warplabs/grammars/<lang>.wasm
 **For LSP changes:**
 
 ```bash
-cd tools/wplab-lsp
+cd tools/wplabs-lsp
 # Edit source files
 cargo build --release
 # Restart LSP in Zed: Cmd+Shift+P → "lsp: restart server"
@@ -243,9 +243,9 @@ repository = "https://github.com/wp-labs/tree-sitter-<lang>"
 rev = "<git-commit-hash>"
 ```
 
-### Step 5: Add Language Handler to wplab-lsp
+### Step 5: Add Language Handler to wplabs-lsp
 
-Create `tools/wplab-lsp/src/lang/<lang>.rs`:
+Create `tools/wplabs-lsp/src/lang/<lang>.rs`:
 
 ```rust
 use crate::lang::{BuiltinInfo, LangHandler, SymbolInfo};
@@ -269,12 +269,12 @@ impl LangHandler for <Lang>Handler {
 
 Register in `lang/mod.rs` and `dispatch.rs`.
 
-Add `tree-sitter-<lang>` dependency to `wplab-lsp/Cargo.toml`.
+Add `tree-sitter-<lang>` dependency to `wplabs-lsp/Cargo.toml`.
 
 ### Step 6: Test
 
 ```bash
-cd tools/wplab-lsp && cargo build --release
+cd tools/wplabs-lsp && cargo build --release
 # Reinstall dev extension in Zed
 # Open a .<lang> file → verify highlighting + LSP features
 ```
@@ -363,19 +363,19 @@ Client                    Server
 2. The Zed extension repo pushed to GitHub (`github.com/wp-labs/zed-warplabs`)
 3. `extension.toml` uses GitHub URLs (not `file:///`) for grammars
 4. `extension.toml` has `repository` field pointing to the extension repo
-5. `wplab-lsp` binary is distributable (published to crates.io or GitHub Releases)
+5. `wplabs-lsp` binary is distributable (published to crates.io or GitHub Releases)
 
-### Publish wplab-lsp
+### Publish wplabs-lsp
 
 **Option A — crates.io:**
 
 ```bash
-cd tools/wplab-lsp
+cd tools/wplabs-lsp
 # Ensure Cargo.toml has: description, license, repository fields
 cargo publish
 ```
 
-Users install with: `cargo install wplab-lsp`
+Users install with: `cargo install wplabs-lsp`
 
 **Option B — GitHub Releases:**
 
@@ -432,7 +432,7 @@ A `.scm` query references a nonexistent node type.
 
 Check Zed logs: `Cmd+Shift+P` → "zed: open log". Common causes:
 
-- `wplab-lsp` not in PATH → install it
+- `wplabs-lsp` not in PATH → install it
 - Extension WASM build failed → check Rust compilation errors in the log
 - Wrong `zed_extension_api` version → update `Cargo.toml`
 
@@ -442,7 +442,7 @@ Verify the LSP responds to `initialize`:
 
 ```bash
 printf 'Content-Length: 80\r\n\r\n{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"capabilities":{}}}' \
-  | wplab-lsp
+  | wplabs-lsp
 ```
 
 Expected: JSON response with `completionProvider`, `hoverProvider`, etc.
@@ -460,7 +460,7 @@ Expected: JSON response with `completionProvider`, `hoverProvider`, etc.
 | Zed highlights: last match wins | Generic `@variable` first, specific `@function.builtin` last |
 | tree-sitter highlights: first match wins | Opposite of Zed |
 | `zed_extension_api` trait requires `fn new()` | Cannot use `#[derive(Default)]` |
-| LSP binary must be in PATH | Extension uses `worktree.which("wplab-lsp")` |
+| LSP binary must be in PATH | Extension uses `worktree.which("wplabs-lsp")` |
 
 ## Checklist: Adding a Language
 
@@ -472,9 +472,9 @@ Expected: JSON response with `completionProvider`, `hoverProvider`, etc.
 [ ] 5.  tree-sitter build --wasm → copy .wasm to grammars/
 [ ] 6.  Create languages/<lang>/ (config.toml + 5 .scm files)
 [ ] 7.  Add [grammars.<lang>] to extension.toml with GitHub URL + rev
-[ ] 8.  Create wplab-lsp/src/lang/<lang>.rs implementing LangHandler
+[ ] 8.  Create wplabs-lsp/src/lang/<lang>.rs implementing LangHandler
 [ ] 9.  Register in lang/mod.rs and dispatch.rs
-[ ] 10. Add tree-sitter-<lang> dependency to wplab-lsp/Cargo.toml
+[ ] 10. Add tree-sitter-<lang> dependency to wplabs-lsp/Cargo.toml
 [ ] 11. cargo build --release && reinstall dev extension
 [ ] 12. Bump extension version
 [ ] 13. Test all features with example files
