@@ -1,0 +1,63 @@
+#[author("John Doe")]
+#[version("1.0")]
+mod my_module : mod_a, mod_b {
+    # module properties
+    author = "John Doe";
+    version = "1.0";
+
+    # environment definition
+    env dev {
+        root = "${HOME}/my_project";
+        gx.read_cmd (
+            name : "MY_PATH",
+            cmd  : "pwd"
+        );
+    }
+
+    env test : dev {
+        root = "${HOME}/test_project";
+        gx.vars {
+            name : "TEST_VAR",
+            cmd  : "echo hello"
+        }
+    }
+
+    # function definition
+    fn echo_message(msg) {
+        gx.echo (value : msg);
+    }
+
+    fn deploy(*env = "dev", target) {
+        gx.cmd (cmd : "deploy.sh");
+        gx.echo (value : "deployed");
+    }
+
+    # activity definition
+    activity task_runner {
+        timeout = "30s";
+        retry_count = 3;
+    }
+
+    # flow definition (pipeline with before/after)
+    flow before_flow | @my_flow | after_flow {
+        gx.echo (value : "Hello from my_flow");
+        task_runner.run (
+            param1 : "value1",
+            param2 : "value2"
+        );
+    }
+
+    # flow definition (no before, only after)
+    flow @simple_flow | cleanup {
+        gx.tpl (template : "config.tpl");
+    }
+
+    # reference flow
+    flow reference_flow : my_flow, other_flow;
+};
+
+extern mod mod_a { path = "@{PATH}"; };
+extern mod mod_b {
+    git = "https://github.com/example/repo.git",
+    channel = "main";
+};

@@ -1,0 +1,11 @@
+name = "GXL"
+grammar = "gxl"
+path_suffixes = ["gxl"]
+line_comments = ["#"]
+brackets = [
+  { start = "{", end = "}", close = true, newline = true },
+  { start = "(", end = ")", close = true, newline = false },
+  { start = "[", end = "]", close = true, newline = false },
+  { start = "\"", end = "\"", close = true, newline = false, not_in = ["string", "comment"] },
+]
+autoclose_before = ";:.,=}])> \n\t"

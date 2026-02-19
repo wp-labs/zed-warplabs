@@ -1,0 +1,66 @@
+// ── Port scan detection scenario ──
+// Tests detection of port scanning followed by brute-force.
+
+use "windows/security.wfs"
+use "rules/detection_l1.wfl"
+
+scenario scan_detection seed 1024 {
+
+  time "2026-03-01T08:00:00Z" duration 1h
+  total 500000
+
+  // ── Firewall deny traffic ──
+
+  stream deny: fw_events 300/s {
+    sip    = ipv4(pool: 200)
+    dip    = ipv4(pool: 50)
+    dport  = range(min: 1, max: 65535)
+    action = "deny"
+  }
+
+  // ── Normal firewall allow traffic ──
+
+  stream allow: fw_events 800/s {
+    sip    = ipv4(pool: 1000)
+    dip    = ipv4(pool: 100)
+    dport  = range(min: 80, max: 443)
+    action = "allow"
+  }
+
+  // ── Auth events for brute-then-scan rule ──
+
+  stream auth_fail: auth_events 100/s {
+    sip    = ipv4(pool: 200)
+    uid    = pattern("admin-{rand:4}")
+    action = "failed"
+  }
+
+  stream auth_ok: auth_events 500/s {
+    sip    = ipv4(pool: 1000)
+    uid    = pattern("user-{seq:0000}")
+    action = "success"
+  }
+
+  // ── Inject scan + brute-force patterns ──
+
+  inject for brute_then_scan on [auth_fail, deny] {
+    hit       3%  count_per_entity=5 within=5m;
+    near_miss 2%  steps_completed=1;
+    non_hit   1%;
+  }
+
+  // ── Timing faults ──
+
+  faults {
+    out_of_order 3%;
+    late         2%;
+    duplicate    1%;
+  }
+
+  // ── Oracle with relaxed tolerance ──
+
+  oracle {
+    time_tolerance  = 2s;
+    score_tolerance = 0.05;
+  }
+}

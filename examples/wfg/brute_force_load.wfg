@@ -1,0 +1,48 @@
+// ── Brute-force load test scenario ──
+// Generates realistic auth traffic with injected brute-force patterns.
+
+use "windows/security.wfs"
+use "rules/brute_force.wfl"
+
+scenario brute_force_load seed 42 {
+
+  time "2026-02-18T00:00:00Z" duration 30m
+  total 200000
+
+  // ── Base traffic ──
+
+  stream fail: auth_events 200/s {
+    sip    = ipv4(pool: 500)
+    uid    = pattern("user-{seq:0000}")
+    action = "failed"
+  }
+
+  stream success: auth_events 400/s {
+    sip    = ipv4(pool: 500)
+    uid    = pattern("user-{seq:0000}")
+    action = "success"
+  }
+
+  // ── Pattern injection ──
+
+  inject for brute_force on [fail] {
+    hit       5%  count_per_entity=5 within=2m;
+    near_miss 3%  count_per_entity=2 within=2m;
+  }
+
+  // ── Timing faults ──
+
+  faults {
+    out_of_order 2%;
+    late         1%;
+    duplicate    0.5%;
+    drop         0.2%;
+  }
+
+  // ── Oracle ──
+
+  oracle {
+    time_tolerance  = 1s;
+    score_tolerance = 0.01;
+  }
+}
