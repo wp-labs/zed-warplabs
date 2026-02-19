@@ -1,7 +1,7 @@
 target
 
 # tree-sitter grammar clones (managed by sync-grammar.sh / Zed)
-grammars/*/
+grammars/*
 
 # tree-sitter build artifacts inside grammar dirs
 *.wasm.map
