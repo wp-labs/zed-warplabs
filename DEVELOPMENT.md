@@ -359,11 +359,12 @@ Client                    Server
 
 ### Prerequisites
 
-1. All 5 tree-sitter grammar repos pushed to GitHub (`github.com/wp-labs/tree-sitter-*`)
+1. All tree-sitter grammar repos pushed to GitHub (`github.com/wp-labs/tree-sitter-*`)
 2. The Zed extension repo pushed to GitHub (`github.com/wp-labs/zed-warplabs`)
-3. `extension.toml` uses GitHub URLs (not `file:///`) for grammars
+3. `extension.toml` uses HTTPS GitHub URLs (not `file:///` or SSH) for all grammars
 4. `extension.toml` has `repository` field pointing to the extension repo
-5. `wplabs-lsp` binary is distributable (published to crates.io or GitHub Releases)
+5. A LICENSE file exists at the repo root (required since Oct 2025)
+6. `wplabs-lsp` binary is distributable (published to crates.io or GitHub Releases)
 
 ### Publish wplabs-lsp
 
@@ -381,30 +382,128 @@ Users install with: `cargo install wplabs-lsp`
 
 Build for multiple targets and upload binaries to a GitHub Release. Users download and place in PATH.
 
-### Publish Zed Extension
+### Publish Zed Extension (First Time)
 
-1. Ensure `tools/zed-warplabs/` is pushed to `https://github.com/wp-labs/zed-warplabs`
-2. Fork [zed-industries/extensions](https://github.com/zed-industries/extensions)
-3. Create `extensions/warplabs/extension.toml`:
+Zed extensions are published via the [zed-industries/extensions](https://github.com/zed-industries/extensions) repository. Each extension is registered as a **git submodule** and listed in a central `extensions.toml` file.
 
-   ```toml
-   [extension]
-   repository = "https://github.com/wp-labs/zed-warplabs"
-   version = "0.9.0"
-   ```
+#### Step 1 — Ensure the extension repo is ready
 
-4. Submit a PR to `zed-industries/extensions` `main` branch
-5. After merge, the extension appears in Zed's marketplace
+```bash
+cd tools/zed-warplabs
 
-### Version Bumping
+# Verify prerequisites
+grep '^version' extension.toml          # version is set
+grep '^repository' extension.toml       # repository URL is set
+ls LICENSE                              # license file exists
+git status                              # clean working tree
+git push origin main                    # pushed to GitHub
+```
+
+#### Step 2 — Fork the extensions registry
+
+Open in browser and fork to your **personal** GitHub account (not an organization — this lets Zed staff push changes to your PR if needed):
+
+```
+https://github.com/zed-industries/extensions/fork
+```
+
+#### Step 3 — Clone your fork and add the submodule
+
+```bash
+# Clone your fork (replace YOUR_USERNAME)
+git clone https://github.com/YOUR_USERNAME/extensions.git
+cd extensions
+
+# Add zed-warplabs as a submodule (must use HTTPS, not SSH)
+git submodule add https://github.com/wp-labs/zed-warplabs.git extensions/warplabs
+```
+
+#### Step 4 — Register in extensions.toml
+
+Add this entry to `extensions.toml` (insert alphabetically among existing entries):
+
+```toml
+[warplabs]
+submodule = "extensions/warplabs"
+version = "0.13.0"
+```
+
+The `version` must match the `version` in `extension.toml` at the submodule commit.
+
+#### Step 5 — Sort, commit, and push
+
+```bash
+# Sort extensions.toml and .gitmodules alphabetically (if pnpm available)
+pnpm sort-extensions
+
+# Stage and commit
+git add extensions/warplabs .gitmodules extensions.toml
+git commit -m "Add warplabs extension v0.13.0"
+
+# Push to your fork
+git push origin main
+```
+
+#### Step 6 — Create a Pull Request
+
+Open your fork on GitHub and click **"Contribute" → "Open pull request"** targeting `zed-industries/extensions:main`.
+
+**PR title:** `Add warplabs extension v0.13.0`
+
+**PR body:**
+
+```markdown
+## Add WarpLabs Extension
+
+Language support for 6 WarpLabs DSLs:
+
+| Language | Extension | Description |
+|----------|-----------|-------------|
+| WFL | `.wfl` | WarpFusion Language (fusion rules) |
+| WFS | `.wfs` | Window Field Schema |
+| WPL | `.wpl` | WarpLabs Parsing Language |
+| OML | `.oml` | Output Mapping Language |
+| WFG | `.wfg` | WarpFusion Scenario Generator |
+| GXL | `.gxl` | Galaxy Flow Language |
+
+Features: syntax highlighting, bracket matching, code folding, auto-indentation,
+symbol outline, snippets, and LSP support (diagnostics, completion, hover,
+go-to-definition, references, rename, formatting).
+
+Repository: https://github.com/wp-labs/zed-warplabs
+```
+
+#### Step 7 — Wait for merge
+
+After CI passes and the PR is merged, the extension appears in Zed's marketplace. Users can find it via `Cmd+Shift+X` → search "WarpLabs".
+
+### Update an Existing Extension
 
 When releasing a new version:
 
-1. Bump `version` in `tools/zed-warplabs/extension.toml`
+1. Bump `version` in `tools/zed-warplabs/extension.toml` and `Cargo.toml`
 2. Update grammar `rev` values if grammars changed
-3. Push to GitHub
-4. Update `version` in the `zed-industries/extensions` entry
-5. Submit PR
+3. Push to `https://github.com/wp-labs/zed-warplabs`
+4. In your fork of `zed-industries/extensions`:
+
+   ```bash
+   cd extensions
+
+   # Update the submodule to the latest commit
+   cd extensions/warplabs
+   git pull origin main
+   cd ../..
+
+   # Update the version in extensions.toml
+   # [warplabs]
+   # version = "0.14.0"    ← new version
+
+   git add extensions/warplabs extensions.toml
+   git commit -m "Update warplabs extension to v0.14.0"
+   git push origin main
+   ```
+
+5. Submit a new PR to `zed-industries/extensions`
 
 ---
 
