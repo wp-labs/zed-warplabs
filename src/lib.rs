@@ -12,9 +12,10 @@ impl zed::Extension for WarpLabsExtension {
         _language_server_id: &LanguageServerId,
         worktree: &zed::Worktree,
     ) -> Result<zed::Command> {
-        let path = worktree
-            .which("wplabs-lsp")
-            .unwrap_or_else(|| "wplabs-lsp".to_string());
+        let path = worktree.which("wplabs-lsp").ok_or_else(|| {
+            "wplabs-lsp not found in PATH. Please install it and ensure it is available."
+                .to_string()
+        })?;
 
         Ok(zed::Command {
             command: path,
