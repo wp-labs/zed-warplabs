@@ -1,6 +1,6 @@
 id = "warplabs"
 name = "WarpLabs"
-version = "0.13.0"
+version = "0.14.0"
 schema_version = 1
 authors = ["WarpLabs Team"]
 description = "WFL, WFS, WPL, OML, WFG, and GXL language support for WarpLabs"
