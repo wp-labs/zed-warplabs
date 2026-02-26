@@ -10,7 +10,7 @@
 ; ── Definition keywords ──
 [
   "rule"
-  "contract"
+  "test"
 ] @keyword
 
 ; ── Control flow ──
@@ -32,13 +32,18 @@
   "derive"
   "score"
   "on"
+  "and"
   "event"
   "close"
+  "key"
+  "limits"
+  "fixed"
+  "within"
 ] @keyword
 
-; ── Contract test keywords ──
+; ── Test keywords ──
 [
-  "given"
+  "input"
   "expect"
   "options"
   "for"
@@ -46,6 +51,7 @@
   "tick"
   "hits"
   "hit"
+  "origin"
 ] @keyword
 
 ; ── Keyword operators ──
@@ -62,7 +68,6 @@
 
 ; ── Window spec keywords ──
 [
-  "tumble"
   "session"
 ] @keyword.modifier
 
@@ -125,10 +130,6 @@
 ; ── Rule definition name ──
 (rule_declaration name: (identifier) @function.definition)
 
-; ── Contract name + target rule ──
-(contract_block name: (identifier) @function.definition)
-(contract_block rule: (identifier) @function)
-
 ; ── Event alias and window type ──
 (event_declaration
   alias: (identifier) @variable
@@ -138,7 +139,7 @@
 (join_clause window: (identifier) @type)
 
 ; ── Yield target type ──
-(yield_clause target: (identifier) @type)
+(yield_target window: (identifier) @type)
 
 ; ── Entity type ──
 (entity_clause type: (identifier) @type)
@@ -203,7 +204,7 @@
   field: (identifier) @property)
 
 ; ── Named arguments in yield ──
-(named_argument name: (identifier) @property)
+(named_argument name: (yield_field) @property)
 
 ; ── Meta entry keys ──
 (meta_entry key: (identifier) @property)
@@ -236,6 +237,7 @@
 ; ── Expect hit assertions ──
 (hit_assertion "score" @property)
 (hit_assertion "close_reason" @property)
+(hit_assertion "origin" @property)
 (hit_assertion "entity_type" @property)
 (hit_assertion "entity_id" @property)
 (hit_assertion "field" @function.builtin)

@@ -1,6 +1,6 @@
 id = "warplabs"
 name = "WarpLabs"
-version = "0.14.0"
+version = "0.15.0"
 schema_version = 1
 authors = ["WarpLabs Team"]
 description = "WFL, WFS, WPL, OML, WFG, and GXL language support for WarpLabs"
@@ -19,11 +19,11 @@ languages = ["WFL", "WFS", "WPL", "OML", "WFG"]
 
 [grammars.wfl]
 repository = "https://github.com/wp-labs/tree-sitter-wfl"
-rev = "540c47074c56c8c6a118c4c9c23706609ee54c51"
+rev = "3b6d543c50d2bf59181649552322f5cbf74265bd"
 
 [grammars.wfs]
 repository = "https://github.com/wp-labs/tree-sitter-wfs"
-rev = "f6f88ca4601ee043d2b3b1c6cc6f8a7e5d7d9574"
+rev = "1a4492d8c2ea8c51952928645b16a27a347c539e"
 
 [grammars.wpl]
 repository = "https://github.com/wp-labs/tree-sitter-wpl"
