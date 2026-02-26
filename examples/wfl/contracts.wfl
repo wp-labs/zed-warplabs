@@ -1,8 +1,8 @@
 // ── Contract tests for L1 detection rules ──
 
 // Brute-force: 3 failed logins within 5m should trigger
-contract brute_force_basic for brute_force {
-  given {
+test brute_force_basic for brute_force {
+  input {
     row(fail, sip = "10.0.0.1", action = "failed", event_time = "2026-02-17T10:00:00Z");
     row(fail, sip = "10.0.0.1", action = "failed", event_time = "2026-02-17T10:00:30Z");
     row(fail, sip = "10.0.0.1", action = "failed", event_time = "2026-02-17T10:01:00Z");
@@ -22,8 +22,8 @@ contract brute_force_basic for brute_force {
 }
 
 // Brute-force: only 2 failures should NOT trigger
-contract brute_force_below_threshold for brute_force {
-  given {
+test brute_force_below_threshold for brute_force {
+  input {
     row(fail, sip = "10.0.0.2", action = "failed", event_time = "2026-02-17T10:00:00Z");
     row(fail, sip = "10.0.0.2", action = "failed", event_time = "2026-02-17T10:00:30Z");
     tick(5m);
@@ -38,8 +38,8 @@ contract brute_force_below_threshold for brute_force {
 }
 
 // DNS no-response: query with no reply should fire on timeout
-contract dns_no_response_timeout for dns_no_response {
-  given {
+test dns_no_response_timeout for dns_no_response {
+  input {
     row(req,
     query_id = "q-1",
     sip = "10.0.0.8",
@@ -63,8 +63,8 @@ options {
 }
 
 // DNS no-response: query WITH response should NOT fire
-contract dns_has_response for dns_no_response {
-  given {
+test dns_has_response for dns_no_response {
+  input {
     row(req,
     query_id = "q-2",
     sip = "10.0.0.9",

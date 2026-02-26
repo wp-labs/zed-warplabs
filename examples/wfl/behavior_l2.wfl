@@ -9,7 +9,7 @@ rule entity_risk_score {
     e: endpoint_events
     ps: endpoint_events && contains(lower(e.process), "powershell")
   }
-  match<host_id:1h:tumble> {
+  match<host_id:1h:fixed> {
     on close {
       e | count >= 1;
     }
@@ -46,7 +46,7 @@ rule login_anomaly {
   events {
     login: auth_events && action == "success"
   }
-  match<uid:1h:tumble> {
+  match<uid:1h:fixed> {
     on close {
       login | count >= 1;
     }

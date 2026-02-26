@@ -19,15 +19,15 @@ languages = ["WFL", "WFS", "WPL", "OML", "WFG"]
 
 [grammars.wfl]
 repository = "https://github.com/wp-labs/tree-sitter-wfl"
-rev = "3b6d543c50d2bf59181649552322f5cbf74265bd"
+rev = "4d4c55f519d8449f399bcaca2860570ebc8b2595"
 
 [grammars.wfs]
 repository = "https://github.com/wp-labs/tree-sitter-wfs"
-rev = "1a4492d8c2ea8c51952928645b16a27a347c539e"
+rev = "39e5fb246b7412fb43660dbb162bdb3bf9ec2404"
 
 [grammars.wpl]
 repository = "https://github.com/wp-labs/tree-sitter-wpl"
-rev = "33d4aa48d8998682bc420b8fba36f7db7e8960d4"
+rev = "3cc86519ff4adeb818e75b70c1c565098c1876b0"
 
 [grammars.oml]
 repository = "https://github.com/wp-labs/tree-sitter-oml"

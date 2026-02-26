@@ -37,7 +37,7 @@ rule brute_then_scan {
       scan.dport | distinct | count > ${SCAN_THRESHOLD:10};
     }
   } -> score(if count(fail) > 10 then 90.0 else 70.0)
-  join ip_blocklist on sip == ip_blocklist.ip
+  join ip_blocklist snapshot on sip == ip_blocklist.ip
   entity(ip, fail.sip)
   yield security_alerts (
     sip = fail.sip,
