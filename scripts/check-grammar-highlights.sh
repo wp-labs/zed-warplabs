@@ -64,11 +64,19 @@ CMD_TIMEOUT_SECONDS="${CMD_TIMEOUT_SECONDS:-20}"
 echo "[INFO] temp workspace: ${TMP_ROOT}"
 
 for lang in "${LANGS[@]}"; do
-  query_file="${ROOT_DIR}/languages/${lang}/highlights.scm"
+  queries_dir="${ROOT_DIR}/languages/${lang}"
   examples_dir="${ROOT_DIR}/examples/${lang}"
 
-  if [ ! -f "${query_file}" ]; then
-    echo "[ERROR] missing highlight query: ${query_file}" >&2
+  if [ ! -d "${queries_dir}" ]; then
+    echo "[ERROR] missing language query directory: ${queries_dir}" >&2
+    exit 1
+  fi
+
+  shopt -s nullglob
+  query_files=("${queries_dir}"/*.scm)
+  shopt -u nullglob
+  if [ "${#query_files[@]}" -eq 0 ]; then
+    echo "[ERROR] no query files found under ${queries_dir}" >&2
     exit 1
   fi
 
@@ -100,10 +108,12 @@ for lang in "${LANGS[@]}"; do
     (cd "${clone_dir}" && run_with_timeout "${CMD_TIMEOUT_SECONDS}" tree-sitter parse -q "${file}" >/dev/null)
   done
 
-  echo "[INFO] [${lang}] compile+run highlights query"
-  for file in "${examples[@]}"; do
-    (cd "${clone_dir}" && run_with_timeout "${CMD_TIMEOUT_SECONDS}" tree-sitter query -q "${query_file}" "${file}" >/dev/null)
+  echo "[INFO] [${lang}] compile+run ${#query_files[@]} query file(s)"
+  for query_file in "${query_files[@]}"; do
+    for file in "${examples[@]}"; do
+      (cd "${clone_dir}" && run_with_timeout "${CMD_TIMEOUT_SECONDS}" tree-sitter query -q "${query_file}" "${file}" >/dev/null)
+    done
   done
 done
 
-echo "[OK] grammar parse and highlight query checks passed"
+echo "[OK] grammar parse and language query checks passed"

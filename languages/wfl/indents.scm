@@ -12,8 +12,8 @@
   (join_clause)
   (yield_clause)
   (conv_clause)
-  (contract_block)
-  (given_block)
+  (test_block)
+  (input_block)
   (expect_block)
   (options_block)
 ] @indent

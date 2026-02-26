@@ -10,8 +10,8 @@
   (derive_block)
   (score_block)
   (conv_clause)
-  (contract_block)
-  (given_block)
+  (test_block)
+  (input_block)
   (expect_block)
   (options_block)
 ] @fold

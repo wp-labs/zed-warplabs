@@ -164,7 +164,7 @@ After modifying a tree-sitter grammar:
 3. Update `rev` in `extension.toml` to the new commit hash
 4. Reinstall the dev extension in Zed
 
-### Validate grammar + highlighting compatibility
+### Validate grammar + language query compatibility
 
 Run this before pushing grammar/highlighting changes:
 
@@ -175,7 +175,7 @@ bash scripts/check-grammar-highlights.sh
 This check will, for each language in `extension.toml`:
 - clone the pinned grammar repo/revision,
 - parse all `examples/<lang>/*.lang` files,
-- compile and run `languages/<lang>/highlights.scm` against those examples.
+- compile and run all `languages/<lang>/*.scm` query files against those examples.
 
 ## Project Structure
 
