@@ -1,17 +1,11 @@
-// ── Minimal scenario (no faults, no oracle) ──
-// P0 baseline: seed-reproducible data generation only.
+// Minimal scenario (traffic only, no injection/expect).
 
-use "windows/security.wfs"
-use "rules/brute_force.wfl"
+use "../wfs/security.wfs"
+use "../wfl/detection_l1.wfl"
 
-scenario minimal seed 7 {
-
-  time "2026-01-01T00:00:00Z" duration 10m
-  total 50000
-
-  stream login: auth_events 100/s {
-    sip    = ipv4(pool: 100)
-    uid    = enum(values: "alice,bob,charlie,dave")
-    action = enum(values: "failed,success")
+#[duration=10m, seed=7]
+scenario minimal {
+  traffic {
+    stream auth_events gen 100/s
   }
 }

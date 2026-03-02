@@ -1,107 +1,59 @@
-; WFG Syntax Highlighting for Zed
-; In Zed the LAST matching pattern wins.
+; WFG syntax highlighting.
+; Keep this in sync with grammars/wfg/src/node-types.json.
 
-; ── Plain identifier (lowest priority — must be FIRST) ──
-(identifier) @variable
-
-; ── Import keyword ──
-"use" @keyword.import
-
-; ── Definition keyword ──
-"scenario" @keyword
-
-; ── Structural keywords ──
 [
-  "seed"
-  "time"
-  "duration"
-  "total"
+  "use"
+  "scenario"
+  "traffic"
   "stream"
-  "inject"
-  "for"
-  "on"
-  "faults"
-  "oracle"
+  "gen"
+  "wave"
+  "burst"
+  "timeline"
+  "injection"
+  "seq"
+  "with"
+  "expect"
 ] @keyword
 
-; ── Mode keywords (hit / near_miss / non_hit) ──
-(mode_keyword) @keyword.modifier
+[
+  "hit"
+  "near_miss"
+  "miss"
+] @keyword.modifier
 
-; ── Boolean literals ──
-(boolean) @constant.builtin
+[
+  "base"
+  "amp"
+  "period"
+  "shape"
+  "peak"
+  "every"
+  "hold"
+] @property
 
-; ── Operators ──
-"=" @operator
-
-; ── Brackets ──
-[ "(" ")" "{" "}" "[" "]" ] @punctuation.bracket
-
-; ── Delimiters ──
-[ "," ";" ":" ] @punctuation.delimiter
-
-; ── Comments ──
 (comment) @comment
-
-; ── String literals ──
 (string) @string
-
-; ── Number literals ──
 (number) @number
-
-; ── Duration literals ──
 (duration) @number
-
-; ── Rate literals (e.g. 200/s) ──
-(rate) @number
-
-; ── Percent literals (e.g. 5%) ──
+(rate_constant) @number
 (percent) @number
+(boolean) @constant.builtin
+(wave_shape) @constant.builtin
 
-; ── Scenario name ──
+(comparison_operator) @operator
+"=" @operator
+".." @operator
+
+[ "(" ")" "{" "}" "<" ">" "#[" "]" ] @punctuation.bracket
+[ "," ] @punctuation.delimiter
+
 (scenario_declaration name: (identifier) @function.definition)
+(annotation_item key: (identifier) @property)
+(stream_statement stream: (identifier) @variable)
+(injection_case stream: (identifier) @variable)
+(sequence_block entity: (identifier) @variable)
+(predicate key: (identifier) @property)
+(expect_statement rule: (identifier) @function)
 
-; ── Scenario seed value ──
-(scenario_declaration seed: (number) @number)
-
-; ── Time clause start value ──
-(time_clause start: (string) @string)
-(time_clause dur: (duration) @number)
-
-; ── Total count ──
-(total_clause count: (number) @number)
-
-; ── Stream alias and window ──
-(stream_block
-  alias: (identifier) @variable
-  window: (identifier) @type)
-
-; ── Stream rate ──
-(stream_block rate: (rate) @number)
-
-; ── Field override name ──
-(field_override name: (field_name (identifier) @property))
-(field_override name: (field_name (quoted_identifier) @property))
-
-; ── Gen function name ──
-(gen_func function: (identifier) @function.builtin)
-
-; ── Named argument key ──
-(named_arg key: (identifier) @property)
-
-; ── Inject rule target ──
-(inject_block rule: (identifier) @function)
-
-; ── Stream list identifiers ──
-(stream_list (identifier) @variable)
-
-; ── Inject line percent ──
-(inject_line percent: (percent) @number)
-
-; ── Param assignment key ──
-(param_assign key: (identifier) @property)
-
-; ── Fault name ──
-(fault_line name: (identifier) @variable)
-
-; ── Fault percent ──
-(fault_line percent: (percent) @number)
+(identifier) @variable

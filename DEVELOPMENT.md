@@ -17,6 +17,12 @@ The extension has two components:
 1. **Zed extension** (`tools/zed-warplabs/`) — syntax highlighting, bracket matching, code folding, indentation, outline, snippets, and LSP client integration
 2. **Language server** (`tools/wplabs-lsp/`) — diagnostics, completion, hover, go-to-definition, find references, rename, document symbols, formatting
 
+## AI Assistant Files
+
+- Shared playbook: `docs/ai/agent-shared.md`
+- Codex adapter: `AGENTS.md`
+- Claude adapter: `CLAUDE.md`
+
 ## Directory Structure
 
 ```
@@ -99,22 +105,29 @@ ln -sf "$(pwd)/target/release/wplabs-lsp" /usr/local/bin/wplabs-lsp
 **For grammar changes:**
 
 ```bash
-cd tools/tree-sitter-<lang>
+cd grammars/<lang>
 # Edit grammar.js
 tree-sitter generate
-tree-sitter parse ../zed-warplabs/examples/<lang>/example.<lang>
+tree-sitter parse ../../examples/<lang>/*.<lang>
 git add -A && git commit -m "Grammar change description"
 
-# Update extension.toml rev
-cd ../zed-warplabs
-# Edit extension.toml: set rev to new commit hash
+# IMPORTANT: grammar AST changes require manual query sync
+# Edit languages/<lang>/highlights.scm (+ indents/folds/outline if needed)
+# Keep examples/<lang>/*.<lang> in sync with the new grammar
 
-# Optionally rebuild WASM
-tree-sitter build --wasm
-cp tree-sitter-<lang>.wasm ../zed-warplabs/grammars/<lang>.wasm
+# Validate grammar + query compatibility (network required)
+cd ../..
+CHECK_LANGS=<lang> bash scripts/check-grammar-highlights.sh
+
+# If grammar repo/rev changed, update extension.toml [grammars.<lang>].rev
 
 # Reinstall dev extension in Zed
 ```
+
+Notes:
+- `languages/<lang>/highlights.scm` is not auto-generated. It must be manually updated when node names/fields change.
+- If highlighting suddenly disappears, first check for stale node names in `languages/<lang>/*.scm` against `grammars/<lang>/src/node-types.json`.
+- Run the compatibility check script before pushing grammar/highlighting changes.
 
 **For LSP changes:**
 

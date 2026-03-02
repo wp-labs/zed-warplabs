@@ -2,8 +2,9 @@
 
 [
   (scenario_declaration)
-  (stream_block)
-  (inject_block)
-  (faults_block)
-  (oracle_block)
+  (traffic_block)
+  (injection_block)
+  (sequence_block)
+  (expect_block)
+  (timeline_expression)
 ] @fold
